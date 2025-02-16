@@ -1,5 +1,7 @@
 # sbt-jextract
 
+[![sbt-snapshots Scala version support](https://index.scala-lang.org/indoorvivants/sbt-jextract/sbt-jextract/latest.svg)](https://index.scala-lang.org/indoorvivants/sbt-jextract/sbt-jextract)
+
 A SBT plugin that wraps [jextract](https://github.com/openjdk/jextract) to generate 
 [FFM](https://docs.oracle.com/en/java/javase/23/core/foreign-function-and-memory-api.html#GUID-E7255CE9-5A95-437C-B37A-276B6C9B5F4D) bindings from header files.
 
