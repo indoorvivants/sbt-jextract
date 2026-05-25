@@ -259,7 +259,8 @@ object JextractPlugin extends AutoPlugin {
 
         val result = process.waitFor()
 
-        IO.listFiles(dest / b.getArgs.pkg).toSet
+        val pkgDir = b.getArgs.pkg.split('.').foldLeft(dest)(_ / _)
+        IO.listFiles(pkgDir).toSet
       }
 
       incremental(binary, bindings = selected, runOne(_), streams.value)
