@@ -1,7 +1,6 @@
 inThisBuild(
   List(
     organization        := "com.indoorvivants",
-    sonatypeProfileName := "com.indoorvivants",
     organizationName    := "Anton Sviridov",
     homepage := Some(
       url("https://github.com/indoorvivants/sbt-jextract")
@@ -21,14 +20,11 @@ inThisBuild(
   )
 )
 
-organization        := "com.indoorvivants"
-sonatypeProfileName := "com.indoorvivants"
-
 lazy val plugin = project
   .in(file("mod/sbt-plugin"))
   .settings(
     sbtPlugin                     := true,
-    pluginCrossBuild / sbtVersion := "1.10.7",
+    pluginCrossBuild / sbtVersion := "1.12.13",
     libraryDependencies += "com.indoorvivants.detective" %% "platform" % "0.1.0",
     moduleName := "sbt-jextract",
     scriptedLaunchOpts := {
@@ -73,7 +69,7 @@ lazy val exampleSupport = project
   .settings(
     publish / skip := true,
     publishLocal / skip := true,
-    scalaVersion := "3.6.3",
+    scalaVersion := "3.8.4",
     bindgenBindings :=
       Seq(
         Binding(

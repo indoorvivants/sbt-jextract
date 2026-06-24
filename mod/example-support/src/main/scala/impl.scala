@@ -10,7 +10,7 @@ object Implementations extends myscalalib.ExportedFunctions:
       left: Float,
       right: Float
   ): Float =
-    val cfg = !config
+    val cfg   = !config
     val label = fromCString(cfg.label)
     if cfg.op == myscalalib_operation.ADD then
       println(s"[$label] $left + $right = ${left + right}")
@@ -19,3 +19,5 @@ object Implementations extends myscalalib.ExportedFunctions:
       println(s"[$label] $left * $right = ${left * right}")
       left * right
     else ???
+  end myscalalib_run
+end Implementations
