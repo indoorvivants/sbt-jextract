@@ -259,6 +259,15 @@ object JextractPlugin extends AutoPlugin {
 
         val result = process.waitFor()
 
+        // Failing here, rather than returning whatever is in pkgDir, also
+        // keeps the run out of the incremental cache, so the next build asks
+        // jextract again instead of replaying a partial or empty result.
+        if (result != 0)
+          sys.error(
+            s"jextract exited with code $result generating ${b.getArgs.pkg} " +
+              s"from ${b.getArgs.file}; its own diagnostics are above"
+          )
+
         val pkgDir = b.getArgs.pkg.split('.').foldLeft(dest)(_ / _)
         IO.listFiles(pkgDir).toSet
       }
