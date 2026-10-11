@@ -48,6 +48,26 @@ class JextractBinding private (args: JextractArgsImpl) {
     */
   def withArgs(args: Seq[String]) = copy(_.copy(extra = args.toList))
 
+  /** Set the options passed to the JVM that jextract itself runs in, via the
+    * `JEXTRACT_JAVA_OPTIONS` environment variable its launcher reads. They are
+    * appended to any `JEXTRACT_JAVA_OPTIONS` sbt was started with. This method
+    * will overwrite the current value with the supplied one.
+    *
+    * The launcher splits the variable on whitespace, so an option can't
+    * contain a space.
+    *
+    * For example, jextract splits the generated header class into a chain of
+    * classes every 1000 declarations; to keep it a single class:
+    * {{{
+    * binding.withJavaOptions(Seq("-Djextract.decls.per.header=100000"))
+    * }}}
+    *
+    * @param options
+    * @return
+    */
+  def withJavaOptions(options: Seq[String]) =
+    copy(_.copy(javaOptions = options.toList))
+
   def toCLIArguments(outputFolder: Option[File]): Seq[String] = {
     val b = Seq.newBuilder[String]
 
@@ -82,7 +102,8 @@ object JextractBinding {
 private case class JextractArgsImpl(
     file: File,
     pkg: String,
-    extra: List[String] = List.empty
+    extra: List[String] = List.empty,
+    javaOptions: List[String] = List.empty
 )
 
 object JextractPlugin extends AutoPlugin {
@@ -244,8 +265,23 @@ object JextractPlugin extends AutoPlugin {
 
         def errPrintln(s: String) = System.err.println(s)
 
-        val process = new java.lang.ProcessBuilder(cmd*)
-          .start()
+        val processBuilder = new java.lang.ProcessBuilder(cmd*)
+
+        val javaOptions = b.getArgs.javaOptions
+        if (javaOptions.nonEmpty) {
+          val inherited = sys.env.get("JEXTRACT_JAVA_OPTIONS").toList
+          processBuilder
+            .environment()
+            .put(
+              "JEXTRACT_JAVA_OPTIONS",
+              (inherited ++ javaOptions).mkString(" ")
+            )
+          log.info(
+            s"With JEXTRACT_JAVA_OPTIONS [${javaOptions.mkString(" ")}]"
+          )
+        }
+
+        val process = processBuilder.start()
 
         scala.io.Source
           .fromInputStream(process.getErrorStream())
